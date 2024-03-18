@@ -79,6 +79,21 @@ local function getObject(id)
   end
 end
 
+function Renewed.getResourceObj(resource)
+  resource = resource or GetInvokingResource() or cache.resource
+  local resourceObjects = {}
+  local amount = 0
+  for i = #Objects, 1, -1 do
+    local item = Objects[i]
+
+    if item.resource == resource then
+      resourceObjects[amount] = item
+      amount += 1
+    end
+  end
+  return resourceObjects
+end
+
 local function forceDeleteEntity(item)
   if not item then return end
 
