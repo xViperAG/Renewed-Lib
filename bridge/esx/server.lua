@@ -84,6 +84,11 @@ function Renewed.removeMoney(src, amount, mType, reason)
 
     if Player.getAccount(type).money < amount then return false end
 
+    if mType == 'bank' and GetResourceState('Renewed-Banking'):match('started') then
+        local account = Player.identifier
+        exports['Renewed-Banking']:handleTransaction(account, reason or "Unknown Payment", amount, reason or "Unknown Payment", 'Los Santos Banking', 'Personal Account', 'withdraw')
+    end
+
     Player.removeAccountMoney(type, amount, reason)
     return true
 end
@@ -97,8 +102,12 @@ function Renewed.addMoney(src, amount, mType, reason)
     local Player = ESX.GetPlayerFromId(src)
     if not Player then return end
 
-    Player.addAccountMoney(type, amount, reason)
+    if mType == 'bank' and GetResourceState('Renewed-Banking'):match('started') then
+        local account = Player.identifier
+        exports['Renewed-Banking']:handleTransaction(account, reason or "Unknown Payment", amount, reason or "Unknown Payment", 'Los Santos Banking', 'Personal Account', 'deposit')
+    end
 
+    Player.addAccountMoney(type, amount, reason)
     return true
 end
 

@@ -86,6 +86,12 @@ function Renewed.removeMoney(src, amount, mType, reason)
 
     if Player.PlayerData.money[mType] < amount then return end
 
+    if mType == 'bank' and GetResourceState('Renewed-Banking'):match('started') then
+        local account = Player.PlayerData.citizenid
+        local name = Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname
+        exports['Renewed-Banking']:handleTransaction(account, reason or "Unknown Payment", amount, reason or "Unknown Payment", 'Los Santos Banking', name, 'withdraw')
+    end
+
     return Player.Functions.RemoveMoney(mType, amount, reason or "unknown")
 end
 
@@ -93,6 +99,12 @@ function Renewed.addMoney(src, amount, mType, reason)
     local Player = QBCore.Functions.GetPlayer(src)
 
     if not Player then return end
+
+    if mType == 'bank' and GetResourceState('Renewed-Banking'):match('started') then
+        local account = Player.PlayerData.citizenid
+        local name = Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname
+        exports['Renewed-Banking']:handleTransaction(account, reason or "Unknown Payment", amount, reason or "Unknown Payment", 'Los Santos Banking', name, 'deposit')
+    end
 
     return Player.Functions.AddMoney(mType, amount, reason or "unknown")
 end
